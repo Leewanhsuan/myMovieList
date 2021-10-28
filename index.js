@@ -1,7 +1,7 @@
 const BASE_URL = 'https://movie-list.alphacamp.io';
 const INDEX_URL = BASE_URL + '/api/v1/movies/';
 const POSTER_URL = BASE_URL + '/posters/';
-const MOVIE_PER_PAGE = 12;
+const MOVIES_PER_PAGE = 12;
 
 const movies = [];
 let filteredMovies = [];
@@ -41,7 +41,7 @@ function renderMovieList(data) {
 
 function renderPaginator(amount) {
     //Math.ceil 無條件進位
-    const numberOfPages = Math.ceil(amount / MOVIE_PER_PAGE);
+    const numberOfPages = Math.ceil(amount / MOVIES_PER_PAGE);
     let rawHTML = '';
     for (let page = 1; page <= numberOfPages; page++) {
         rawHTML += `<li class="page-item">
@@ -53,12 +53,12 @@ function renderPaginator(amount) {
     paginator.innerHTML = rawHTML;
 }
 
-function getMovieByPage(page) {
+function getMoviesByPage(page) {
     //page 1 => movie 0-11
     //page 2 => movie 12-23
     //...
     const data = filteredMovies.length ? filteredMovies : movies;
-    const startIndex = (page - 1) * MOVIE_PER_PAGE;
+    const startIndex = (page - 1) * MOVIES_PER_PAGE;
     return data.slice(startIndex, startIndex + MOVIES_PER_PAGE);
 }
 
@@ -113,14 +113,15 @@ searchForm.addEventListener('submit', function onSearchFormSubmitted(event) {
     if (filteredMovies.length === 0) {
         return alert('Cannot find movie with keyword: ' + keyword);
     }
+    const numberOfPages = Math.ceil(filteredMovies.length / MOVIES_PER_PAGE);
     renderPaginator(filteredMovies.length);
-    renderMovieList(getMoviesByPage(filteredMovies));
+    renderMovieList(getMoviesByPage(numberOfPages));
 });
 
 paginator.addEventListener('click', function onPaginatorCicked(event) {
     if (event.target.tagName !== 'A') return;
     const page = Number(event.target.dataset.page);
-    renderMovieList(getMovieByPage(page));
+    renderMovieList(getMoviesByPage(page));
 });
 
 axios
