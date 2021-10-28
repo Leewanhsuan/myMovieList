@@ -25,7 +25,7 @@ function renderMovieList(data) {
                             <button class="btn btn-primary btn-show-movie" data-toggle="modal" data-target="#movie-modal" data-id="${
                                 item.id
                             }">More</button>
-                            <button class="btn btn-info btn-add-favorite" data-id="${item.id}">+</button>
+                            <button class="btn btn-danger btn-remove-favorite" data-id="${item.id}">X</button>
                         </div>
                     </div>
                 </div>
@@ -58,12 +58,25 @@ function showMovieModal(id) {
     });
 }
 
+function removeFromFavorite(id) {
+    if (!movies || !movies.length) return;
+    const movieIndex = movies.findIndex((movie) => movie.id === id);
+    if (movieIndex === -1) return;
+
+    //把元素從陣列中移除
+
+    movies.splice(movieIndex, 1);
+    localStorage.setItem('favoriteMovies', JSON.stringify(movies));
+
+    renderMovieList(movies);
+}
+
 dataPanel.addEventListener('click', function onPanelClicked(event) {
     if (event.target.matches('.btn-show-movie')) {
         // console.log(event.target.dataset);
         showMovieModal(Number(event.target.dataset.id));
-    } else if (event.target.matches('.btn-add-favorite')) {
-        addToFavorite(Number(event.target.dataset.id));
+    } else if (event.target.matches('.btn-remove-favorite')) {
+        removeFromFavorite(Number(event.target.dataset.id));
     }
 });
 
