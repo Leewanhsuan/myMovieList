@@ -2,7 +2,7 @@ const BASE_URL = 'https://movie-list.alphacamp.io';
 const INDEX_URL = BASE_URL + '/api/v1/movies/';
 const POSTER_URL = BASE_URL + '/posters/';
 
-const movies = [];
+const movies = JSON.parse(localStorage.getItem('favoriteMovies'));
 
 const dataPanel = document.querySelector('#data-panel');
 
@@ -58,19 +58,6 @@ function showMovieModal(id) {
     });
 }
 
-function addToFavorite(id) {
-    const list = JSON.parse(localStorage.getItem('favoriteMovies')) || [];
-    const movie = movies.find((movie) => movie.id === id);
-
-    if (list.some((movie) => movie.id === id)) {
-        return alert('此電影已經在收藏清單中');
-    }
-
-    list.push(movie);
-
-    localStorage.setItem('favoriteMovies', JSON.stringify(list));
-}
-
 dataPanel.addEventListener('click', function onPanelClicked(event) {
     if (event.target.matches('.btn-show-movie')) {
         // console.log(event.target.dataset);
@@ -79,25 +66,5 @@ dataPanel.addEventListener('click', function onPanelClicked(event) {
         addToFavorite(Number(event.target.dataset.id));
     }
 });
-
-searchForm.addEventListener('submit', function onSearchFormSubmitted(event) {
-    event.preventDefault();
-    const keyword = searchInput.value.trim().toLowerCase();
-    let filteredMovies = [];
-    filteredMovies = movies.filter((movie) => movie.title.toLowerCase().includes(keyword));
-    renderMovieList(filteredMovies);
-
-    if (filteredMovies.length === 0) {
-        return alert('Cannot find movie with keyword: ' + keyword);
-    }
-});
-
-axios
-    .get(INDEX_URL)
-    .then((response) => {
-        movies.push(...response.data.results);
-        renderMovieList(movies);
-    })
-    .catch((err) => console.log(err));
 
 renderMovieList(movies);
